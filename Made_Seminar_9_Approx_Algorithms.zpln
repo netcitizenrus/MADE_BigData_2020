@@ -1,0 +1,1431 @@
+﻿{
+  "paragraphs": [
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=249",
+              "$$hashKey": "object:11825"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=250",
+              "$$hashKey": "object:11826"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337237888_-1438955824",
+      "id": "paragraph_1605337237888_-1438955824",
+      "dateCreated": "2020-11-14T07:00:37+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:268",
+      "text": "val df = spark.read.option(\"inferSchema\", \"true\").option(\"header\", \"true\").csv(\"/notebook/tripadvisor_hotel_reviews.csv\")",
+      "dateUpdated": "2020-11-14T08:19:23+0000",
+      "dateFinished": "2020-11-14T07:03:47+0000",
+      "dateStarted": "2020-11-14T07:03:46+0000",
+      "title": "Вычитаем датасет",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mdf\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.Dataset[org.apache.spark.sql.Row]\u001b[0m = [Review: string, Rating: int]\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=251",
+              "$$hashKey": "object:582"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337389003_-369172085",
+      "id": "paragraph_1605337389003_-369172085",
+      "dateCreated": "2020-11-14T07:03:09+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:343",
+      "text": "df.show",
+      "dateUpdated": "2020-11-14T07:03:55+0000",
+      "dateFinished": "2020-11-14T07:03:55+0000",
+      "dateStarted": "2020-11-14T07:03:55+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------------------+------+\n|              Review|Rating|\n+--------------------+------+\n|poor value stayed...|     2|\n|good choice hotel...|     5|\n|service service s...|     5|\n|good location poo...|     2|\n|great location n'...|     2|\n|not bad location ...|     3|\n|ace hotel awesome...|     5|\n|priority award fl...|     2|\n|close convention ...|     4|\n|great price okay ...|     3|\n|avings seattle di...|     3|\n|fun charming just...|     4|\n|trust great, just...|     5|\n|great location fi...|     4|\n|rudest people don...|     1|\n|cramped noisy ove...|     1|\n|alright check gre...|     4|\n|dirty place, watc...|     1|\n|nice hotel friend...|     4|\n|checked early wo ...|     2|\n+--------------------+------+\nonly showing top 20 rows\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337435259_300814897",
+      "id": "paragraph_1605337435259_300814897",
+      "dateCreated": "2020-11-14T07:03:55+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:482",
+      "text": "import org.apache.spark.ml.Pipeline\nimport org.apache.spark.ml.feature.{HashingTF, IDF, RegexTokenizer}\n\n\nval preprocessingPipe = new Pipeline()\n    .setStages(Array(\n        new RegexTokenizer()\n        .setInputCol(\"Review\")\n        .setOutputCol(\"tokenized\")\n        .setPattern(\"\\\\W+\"),\n        new HashingTF()\n            .setInputCol(\"tokenized\")\n            .setOutputCol(\"tf\")\n            .setBinary(true)\n            .setNumFeatures(1000),\n        new HashingTF()\n            .setInputCol(\"tokenized\")\n            .setOutputCol(\"tf2\")\n            .setNumFeatures(1000),\n        new IDF()\n            .setInputCol(\"tf2\")\n            .setOutputCol(\"tfidf\")\n    ))\n",
+      "dateUpdated": "2020-11-14T08:19:29+0000",
+      "dateFinished": "2020-11-14T07:44:49+0000",
+      "dateStarted": "2020-11-14T07:44:48+0000",
+      "title": "Построим пайплайн подготовки фичей",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "import org.apache.spark.ml.Pipeline\nimport org.apache.spark.ml.feature.{HashingTF, IDF, RegexTokenizer}\n\u001b[1m\u001b[34mpreprocessingPipe\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.ml.Pipeline\u001b[0m = pipeline_608552e36473\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=348",
+              "$$hashKey": "object:11856"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337515628_448891660",
+      "id": "paragraph_1605337515628_448891660",
+      "dateCreated": "2020-11-14T07:05:15+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:587",
+      "text": "val Array(train, test) = df.randomSplit(Array(0.8, 0.2))\n\n\nval pipe = preprocessingPipe.fit(train)\n\nval trainFeatures = pipe.transform(train).cache()\nval testFeatures = pipe.transform(test)",
+      "dateUpdated": "2020-11-14T08:19:39+0000",
+      "dateFinished": "2020-11-14T07:44:54+0000",
+      "dateStarted": "2020-11-14T07:44:52+0000",
+      "title": "Разобьем на трейн и тест",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mtrain\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.Dataset[org.apache.spark.sql.Row]\u001b[0m = [Review: string, Rating: int]\n\u001b[1m\u001b[34mtest\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.Dataset[org.apache.spark.sql.Row]\u001b[0m = [Review: string, Rating: int]\n\u001b[1m\u001b[34mpipe\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.ml.PipelineModel\u001b[0m = pipeline_608552e36473\n\u001b[1m\u001b[34mtrainFeatures\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.Dataset[org.apache.spark.sql.Row]\u001b[0m = [Review: string, Rating: int ... 4 more fields]\n\u001b[1m\u001b[34mtestFeatures\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m = [Review: string, Rating: int ... 4 more fields]\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=252",
+              "$$hashKey": "object:1284"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337515918_1586834438",
+      "id": "paragraph_1605337515918_1586834438",
+      "dateCreated": "2020-11-14T07:05:15+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:656",
+      "text": "trainFeatures.show",
+      "dateUpdated": "2020-11-14T07:12:56+0000",
+      "dateFinished": "2020-11-14T07:12:57+0000",
+      "dateStarted": "2020-11-14T07:12:56+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------------------+------+--------------------+--------------------+\n|              Review|Rating|           tokenized|                  tf|\n+--------------------+------+--------------------+--------------------+\n|1 best small hote...|     5|[1, best, small, ...|(1000,[3,35,48,91...|\n|2 weeks paradise ...|     4|[2, weeks, paradi...|(1000,[17,18,35,4...|\n|2 weeks paradise ...|     4|[2, weeks, paradi...|(1000,[7,18,25,29...|\n|25th, anniversary...|     4|[25th, anniversar...|(1000,[3,7,18,31,...|\n|3 star hotel star...|     2|[3, star, hotel, ...|(1000,[35,65,109,...|\n|3 star plus glasg...|     4|[3, star, plus, g...|(1000,[1,7,35,106...|\n|3 star resort 5 s...|     1|[3, star, resort,...|(1000,[18,27,35,4...|\n|3rd times charm, ...|     5|[3rd, times, char...|(1000,[1,18,25,27...|\n|4.5 stars, think ...|     2|[4, 5, stars, thi...|(1000,[6,18,23,62...|\n|48 hours barcelon...|     4|[48, hours, barce...|(1000,[7,18,32,35...|\n|5 day away just d...|     2|[5, day, away, ju...|(1000,[1,9,18,20,...|\n|5 stars fussing a...|     5|[5, stars, fussin...|(1000,[23,35,76,1...|\n|5* way, start hol...|     5|[5, way, start, h...|(1000,[1,14,18,26...|\n|7 nights turned 3...|     1|[7, nights, turne...|(1000,[1,3,6,7,14...|\n|987 barcelona hot...|     4|[987, barcelona, ...|(1000,[1,8,35,125...|\n|absolute best hot...|     5|[absolute, best, ...|(1000,[1,11,14,18...|\n|absolute perfect ...|     5|[absolute, perfec...|(1000,[1,7,13,20,...|\n|absolute roach mo...|     1|[absolute, roach,...|(1000,[18,25,28,3...|\n|absolute worst va...|     1|[absolute, worst,...|(1000,[1,4,7,11,1...|\n|absolutely amazin...|     5|[absolutely, amaz...|(1000,[1,7,18,35,...|\n+--------------------+------+--------------------+--------------------+\nonly showing top 20 rows\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337516403_914225079",
+      "id": "paragraph_1605337516403_914225079",
+      "dateCreated": "2020-11-14T07:05:16+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:725",
+      "text": "val testFeaturesWithIndex = testFeatures.withColumn(\"id\", monotonicallyIncreasingId()).cache()",
+      "dateUpdated": "2020-11-14T08:20:09+0000",
+      "dateFinished": "2020-11-14T07:44:56+0000",
+      "dateStarted": "2020-11-14T07:44:56+0000",
+      "title": "Добавим индекс для сообщений в тесте, чтобы потом было проще группировать",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[33mwarning: \u001b[0mthere was one deprecation warning; re-run with -deprecation for details\n\u001b[1m\u001b[34mtestFeaturesWithIndex\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.Dataset[org.apache.spark.sql.Row]\u001b[0m = [Review: string, Rating: int ... 5 more fields]\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=253",
+              "$$hashKey": "object:1345"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337516846_-1747534835",
+      "id": "paragraph_1605337516846_-1747534835",
+      "dateCreated": "2020-11-14T07:05:16+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:863",
+      "text": "testFeaturesWithIndex.show",
+      "dateUpdated": "2020-11-14T07:14:20+0000",
+      "dateFinished": "2020-11-14T07:14:21+0000",
+      "dateStarted": "2020-11-14T07:14:20+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------------------+------+--------------------+--------------------+---+\n|              Review|Rating|           tokenized|                  tf| id|\n+--------------------+------+--------------------+--------------------+---+\n|100 location fant...|     4|[100, location, f...|(1000,[62,86,100,...|  0|\n|1st time dominica...|     4|[1st, time, domin...|(1000,[1,18,53,82...|  1|\n|2nd time-loved, h...|     5|[2nd, time, loved...|(1000,[1,10,18,25...|  2|\n|3 pleasant days s...|     5|[3, pleasant, day...|(1000,[10,14,18,2...|  3|\n|4*, n't think boo...|     1|[4, n, t, think, ...|(1000,[7,18,35,39...|  4|\n|5 nights january ...|     5|[5, nights, janua...|(1000,[18,25,35,3...|  5|\n|5* treatment stay...|     5|[5, treatment, st...|(1000,[1,35,71,14...|  6|\n|5th visit return ...|     5|[5th, visit, retu...|(1000,[1,16,30,35...|  7|\n|a+++ hotel qt hot...|     5|[a, hotel, qt, ho...|(1000,[1,20,35,63...|  8|\n|abominable read r...|     1|[abominable, read...|(1000,[1,34,35,83...|  9|\n|absolutely amazin...|     5|[absolutely, amaz...|(1000,[7,18,26,53...| 10|\n|absolutely superb...|     5|[absolutely, supe...|(1000,[1,21,25,35...| 11|\n|amazing hotel ama...|     5|[amazing, hotel, ...|(1000,[25,35,54,7...| 12|\n|amazing hotel hot...|     5|[amazing, hotel, ...|(1000,[18,20,35,6...| 13|\n|amazing time pall...|     4|[amazing, time, p...|(1000,[18,44,45,5...| 14|\n|argonaut rocked d...|     5|[argonaut, rocked...|(1000,[1,12,18,35...| 15|\n|avearge rating ju...|     3|[avearge, rating,...|(1000,[7,18,19,31...| 16|\n|average hotel gre...|     2|[average, hotel, ...|(1000,[1,7,18,34,...| 17|\n|average hotel nic...|     3|[average, hotel, ...|(1000,[12,18,20,3...| 18|\n|avoid arena booke...|     1|[avoid, arena, bo...|(1000,[7,12,24,35...| 19|\n+--------------------+------+--------------------+--------------------+---+\nonly showing top 20 rows\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=254",
+              "$$hashKey": "object:11892"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338069158_-259440299",
+      "id": "paragraph_1605338069158_-259440299",
+      "dateCreated": "2020-11-14T07:14:29+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1764",
+      "text": "import org.apache.spark.ml.feature.MinHashLSH\n\n\nval mh = new MinHashLSH()\n    .setInputCol(\"tf\")\n    .setOutputCol(\"buckets\")\n    .setNumHashTables(3)\n\nval mhModel = mh.fit(trainFeatures)",
+      "dateUpdated": "2020-11-14T08:20:36+0000",
+      "dateFinished": "2020-11-14T07:17:02+0000",
+      "dateStarted": "2020-11-14T07:17:01+0000",
+      "title": "Подберем хэш-функции для MinHash",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "import org.apache.spark.ml.feature.MinHashLSH\n\u001b[1m\u001b[34mmh\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.ml.feature.MinHashLSH\u001b[0m = mh-lsh_57cebed90632\n\u001b[1m\u001b[34mmhModel\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.ml.feature.MinHashLSHModel\u001b[0m = mh-lsh_57cebed90632\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=265",
+              "$$hashKey": "object:2557"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338548125_2097550796",
+      "id": "paragraph_1605338548125_2097550796",
+      "dateCreated": "2020-11-14T07:22:28+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:2397",
+      "text": "mhModel.transform(trainFeatures).select(col(\"buckets\")).show(truncate=false)",
+      "dateUpdated": "2020-11-14T07:23:08+0000",
+      "dateFinished": "2020-11-14T07:23:09+0000",
+      "dateStarted": "2020-11-14T07:23:09+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+----------------------------------------------+\n|buckets                                       |\n+----------------------------------------------+\n|[[3.7334817E7], [7.5346371E7], [1123406.0]]   |\n|[[1.6853169E7], [2.2835002E7], [1.4325689E7]] |\n|[[3198737.0], [1.7662128E7], [1.4328301E7]]   |\n|[[1321432.0], [1.00308837E8], [9924928.0]]    |\n|[[3.2384906E7], [1.7662128E7], [1123406.0]]   |\n|[[3198737.0], [458973.0], [1120794.0]]        |\n|[[1.13116197E8], [2.5421439E7], [8.0352776E7]]|\n|[[2.8630296E7], [1.2489254E7], [4.0738091E7]] |\n|[[3198737.0], [9902817.0], [9924928.0]]       |\n|[[4.2966732E7], [3.318075E7], [9924928.0]]    |\n|[[4.2966732E7], [1.00308837E8], [9924928.0]]  |\n|[[1.0025953E7], [2.0248565E7], [1.872645E7]]  |\n|[[1.6853169E7], [4729943.0], [1123406.0]]     |\n|[[4.1089427E7], [2.5421439E7], [6.7147881E7]] |\n|[[3198737.0], [1.2489254E7], [4.0738091E7]]   |\n|[[1.6853169E7], [7316380.0], [1120794.0]]     |\n|[[4.1089427E7], [2.5421439E7], [1.872645E7]]  |\n|[[1321432.0], [4729943.0], [1123406.0]]       |\n|[[1.97602098E8], [1.8385745E8], [8.4758761E7]]|\n|[[1.6853169E7], [5.2970342E7], [5.8346359E7]] |\n+----------------------------------------------+\nonly showing top 20 rows\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338068877_1614379039",
+      "id": "paragraph_1605338068877_1614379039",
+      "dateCreated": "2020-11-14T07:14:28+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1695",
+      "text": "val neighbors = mhModel.approxSimilarityJoin(trainFeatures, testFeaturesWithIndex, 0.8)",
+      "dateUpdated": "2020-11-14T08:20:52+0000",
+      "dateFinished": "2020-11-14T07:21:09+0000",
+      "dateStarted": "2020-11-14T07:21:09+0000",
+      "title": "Найдем ближайших соседей",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mneighbors\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.Dataset[_]\u001b[0m = [datasetA: struct<Review: string, Rating: int ... 3 more fields>, datasetB: struct<Review: string, Rating: int ... 4 more fields> ... 1 more field]\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338498495_1667196985",
+      "id": "paragraph_1605338498495_1667196985",
+      "dateCreated": "2020-11-14T07:21:38+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:2300",
+      "text": "neighbors.printSchema",
+      "dateUpdated": "2020-11-14T07:21:43+0000",
+      "dateFinished": "2020-11-14T07:21:43+0000",
+      "dateStarted": "2020-11-14T07:21:43+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "root\n |-- datasetA: struct (nullable = false)\n |    |-- Review: string (nullable = true)\n |    |-- Rating: integer (nullable = true)\n |    |-- tokenized: array (nullable = true)\n |    |    |-- element: string (containsNull = true)\n |    |-- tf: vector (nullable = true)\n |    |-- buckets: array (nullable = true)\n |    |    |-- element: vector (containsNull = true)\n |-- datasetB: struct (nullable = false)\n |    |-- Review: string (nullable = true)\n |    |-- Rating: integer (nullable = true)\n |    |-- tokenized: array (nullable = true)\n |    |    |-- element: string (containsNull = true)\n |    |-- tf: vector (nullable = true)\n |    |-- id: long (nullable = false)\n |    |-- buckets: array (nullable = true)\n |    |    |-- element: vector (containsNull = true)\n |-- distCol: double (nullable = true)\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=261",
+              "$$hashKey": "object:2285"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=262",
+              "$$hashKey": "object:2286"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=263",
+              "$$hashKey": "object:2287"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338068410_1013951892",
+      "id": "paragraph_1605338068410_1013951892",
+      "dateCreated": "2020-11-14T07:14:28+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1626",
+      "text": "neighbors.show",
+      "dateUpdated": "2020-11-14T07:21:13+0000",
+      "dateFinished": "2020-11-14T07:21:21+0000",
+      "dateStarted": "2020-11-14T07:21:13+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------------------+--------------------+------------------+\n|            datasetA|            datasetB|           distCol|\n+--------------------+--------------------+------------------+\n|[absolute worst v...|[review seasoned ...| 0.699421965317919|\n|[average best nee...|[read reviews lis...|0.7842105263157895|\n|[awesome/beautifu...|[good experience ...|0.7073732718894009|\n|[come expect marr...|[good bad experie...|0.7934131736526946|\n|[nice resort lots...|[thank tripadviso...|0.7758186397984886|\n|[not beat price s...|[thank tripadviso...|0.7872928176795579|\n|[parents read boo...|[review seasoned ...|0.7072243346007605|\n|[true paradise, w...|[good bad experie...|0.7020316027088036|\n|[wonderful stay g...|[great hotel husb...|0.7865853658536586|\n|[good not great h...|[westin way did r...|0.7946428571428572|\n|[good not great s...|[gorgeous hotel c...|0.7579250720461095|\n|[great time used ...|[read reviews lis...|0.7876712328767124|\n|[just ok boyfrien...|[great stay renai...|0.7975460122699387|\n|[loved riu bambu,...|[wonderful hotel ...|0.7597042513863217|\n|[n't know hotel p...|[read reviews lis...|0.7911764705882353|\n|[nice resort lots...|[bali highlights ...|0.7192622950819672|\n|[really enjoyed m...|[thank tripadviso...| 0.752808988764045|\n|[true gem plannin...|[overrated, overr...|0.7836257309941521|\n|[bon temps loews ...|[wonderful hotel ...|0.7868480725623583|\n|[great place inex...|[wonderful hotel ...|0.7622950819672132|\n+--------------------+--------------------+------------------+\nonly showing top 20 rows\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338068295_1519239185",
+      "id": "paragraph_1605338068295_1519239185",
+      "dateCreated": "2020-11-14T07:14:28+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1557",
+      "text": "val predictions = neighbors\n    .withColumn(\"similarity\", (lit(1) - col(\"distCol\")))\n    .groupBy(\"datasetB.id\")\n    .agg((sum(col(\"similarity\") * col(\"datasetA.Rating\")) / sum(col(\"similarity\"))).as(\"predict\"))",
+      "dateUpdated": "2020-11-14T08:21:07+0000",
+      "dateFinished": "2020-11-14T07:26:20+0000",
+      "dateStarted": "2020-11-14T07:26:20+0000",
+      "title": "Соберем предсказания",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mpredictions\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m = [id: bigint, predict: double]\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338811531_-754661383",
+      "id": "paragraph_1605338811531_-754661383",
+      "dateCreated": "2020-11-14T07:26:51+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:2731",
+      "text": "val forMetric = testFeaturesWithIndex.join(predictions, Seq(\"id\"))\n",
+      "dateUpdated": "2020-11-14T07:46:35+0000",
+      "dateFinished": "2020-11-14T07:27:21+0000",
+      "dateStarted": "2020-11-14T07:27:20+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mforMetric\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m = [id: bigint, Review: string ... 4 more fields]\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338068123_881585989",
+      "id": "paragraph_1605338068123_881585989",
+      "dateCreated": "2020-11-14T07:14:28+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1488",
+      "text": "import org.apache.spark.ml.evaluation.RegressionEvaluator\n\nval metrics = new RegressionEvaluator()\n    .setLabelCol(\"Rating\")\n    .setPredictionCol(\"predict\")\n    .setMetricName(\"rmse\")",
+      "dateUpdated": "2020-11-14T08:21:28+0000",
+      "dateFinished": "2020-11-14T07:28:25+0000",
+      "dateStarted": "2020-11-14T07:28:25+0000",
+      "title": "Создадим инстанс оценщика качества",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "import org.apache.spark.ml.evaluation.RegressionEvaluator\n\u001b[1m\u001b[34mmetrics\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.ml.evaluation.RegressionEvaluator\u001b[0m = regEval_3435776cacd4\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=271",
+              "$$hashKey": "object:3082"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=272",
+              "$$hashKey": "object:3083"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=273",
+              "$$hashKey": "object:3084"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338067868_304910005",
+      "id": "paragraph_1605338067868_304910005",
+      "dateCreated": "2020-11-14T07:14:27+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1419",
+      "text": "metrics.evaluate(forMetric)",
+      "dateUpdated": "2020-11-14T07:28:42+0000",
+      "dateFinished": "2020-11-14T07:28:56+0000",
+      "dateStarted": "2020-11-14T07:28:42+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres31\u001b[0m: \u001b[1m\u001b[32mDouble\u001b[0m = 1.3780519485047267\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=299",
+              "$$hashKey": "object:12233"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=300",
+              "$$hashKey": "object:12234"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=301",
+              "$$hashKey": "object:12235"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=302",
+              "$$hashKey": "object:12236"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=303",
+              "$$hashKey": "object:12237"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=304",
+              "$$hashKey": "object:12238"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=305",
+              "$$hashKey": "object:12239"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=306",
+              "$$hashKey": "object:12240"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=307",
+              "$$hashKey": "object:12241"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=308",
+              "$$hashKey": "object:12242"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=309",
+              "$$hashKey": "object:12243"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=310",
+              "$$hashKey": "object:12244"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=311",
+              "$$hashKey": "object:12245"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=312",
+              "$$hashKey": "object:12246"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=313",
+              "$$hashKey": "object:12247"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=314",
+              "$$hashKey": "object:12248"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=315",
+              "$$hashKey": "object:12249"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=316",
+              "$$hashKey": "object:12250"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=317",
+              "$$hashKey": "object:12251"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=318",
+              "$$hashKey": "object:12252"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=319",
+              "$$hashKey": "object:12253"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=320",
+              "$$hashKey": "object:12254"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=321",
+              "$$hashKey": "object:12255"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=322",
+              "$$hashKey": "object:12256"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=323",
+              "$$hashKey": "object:12257"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=324",
+              "$$hashKey": "object:12258"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=325",
+              "$$hashKey": "object:12259"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=326",
+              "$$hashKey": "object:12260"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=327",
+              "$$hashKey": "object:12261"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=328",
+              "$$hashKey": "object:12262"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=329",
+              "$$hashKey": "object:12263"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=330",
+              "$$hashKey": "object:12264"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=331",
+              "$$hashKey": "object:12265"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=332",
+              "$$hashKey": "object:12266"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=333",
+              "$$hashKey": "object:12267"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=334",
+              "$$hashKey": "object:12268"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=335",
+              "$$hashKey": "object:12269"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=336",
+              "$$hashKey": "object:12270"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=337",
+              "$$hashKey": "object:12271"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=338",
+              "$$hashKey": "object:12272"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=339",
+              "$$hashKey": "object:12273"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=340",
+              "$$hashKey": "object:12274"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=341",
+              "$$hashKey": "object:12275"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=342",
+              "$$hashKey": "object:12276"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=343",
+              "$$hashKey": "object:12277"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=344",
+              "$$hashKey": "object:12278"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=345",
+              "$$hashKey": "object:12279"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=346",
+              "$$hashKey": "object:12280"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=347",
+              "$$hashKey": "object:12281"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605338067695_860727703",
+      "id": "paragraph_1605338067695_860727703",
+      "dateCreated": "2020-11-14T07:14:27+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1350",
+      "text": "val results = Array.range(3, 16, 2).map(numHashes => {\n    val mh = new MinHashLSH()\n        .setInputCol(\"tf\")\n        .setOutputCol(\"buckets\")\n        .setNumHashTables(numHashes)\n        .fit(trainFeatures)\n    \n    val neighbors = mh.approxSimilarityJoin(trainFeatures, testFeaturesWithIndex, 0.7)\n    \n    val predictions = neighbors\n        .withColumn(\"similarity\", (lit(1) - col(\"distCol\")))\n        .groupBy(\"datasetB.id\")\n        .agg(\n            (sum(col(\"similarity\") * col(\"datasetA.Rating\")) / sum(col(\"similarity\"))).as(\"predict\"),\n            count(\"datasetA.Rating\").as(\"numNeighbors\")\n        )\n    \n    val forMetric = testFeaturesWithIndex.join(predictions, Seq(\"id\"))\n    \n    val meanNumNeighbors = forMetric.select(avg(\"numNeighbors\")).collect.head(0)\n    \n    val metric = metrics.evaluate(forMetric)\n    \n    val res = (numHashes, metric, meanNumNeighbors)\n    println(res)\n    res\n})",
+      "dateUpdated": "2020-11-14T08:22:03+0000",
+      "dateFinished": "2020-11-14T07:42:11+0000",
+      "dateStarted": "2020-11-14T07:35:21+0000",
+      "title": "Посмотрим как зависит качество от количества хэшей",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(3,1.2350770272928486,9.166666666666666)\n(5,1.157640344750254,9.857142857142858)\n(7,1.1576403447502537,9.857142857142858)\n(9,1.12986158385725,10.428571428571429)\n(11,1.12986158385725,10.428571428571429)\n(13,1.12986158385725,10.428571428571429)\n(15,1.12986158385725,10.428571428571429)\n\u001b[1m\u001b[34mresults\u001b[0m: \u001b[1m\u001b[32mArray[(Int, Double, Any)]\u001b[0m = Array((3,1.2350770272928486,9.166666666666666), (5,1.157640344750254,9.857142857142858), (7,1.1576403447502537,9.857142857142858), (9,1.12986158385725,10.428571428571429), (11,1.12986158385725,10.428571428571429), (13,1.12986158385725,10.428571428571429), (15,1.12986158385725,10.428571428571429))\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "lineChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "numHashes": "string",
+                      "rmse": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "numHashes",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "rmse",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605339748587_1359289503",
+      "id": "paragraph_1605339748587_1359289503",
+      "dateCreated": "2020-11-14T07:42:28+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:10303",
+      "text": "z.show(results.map(x => (x._1, x._2)).toList.toDF(\"numHashes\", \"rmse\"))",
+      "dateUpdated": "2020-11-14T07:44:24+0000",
+      "dateFinished": "2020-11-14T07:44:21+0000",
+      "dateStarted": "2020-11-14T07:44:20+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "numHashes\trmse\n3\t1.2350770272928486\n5\t1.157640344750254\n7\t1.1576403447502537\n9\t1.12986158385725\n11\t1.12986158385725\n13\t1.12986158385725\n15\t1.12986158385725\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=349",
+              "$$hashKey": "object:12493"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337516716_81990137",
+      "id": "paragraph_1605337516716_81990137",
+      "dateCreated": "2020-11-14T07:05:16+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:794",
+      "text": "import org.apache.spark.ml.feature.BucketedRandomProjectionLSH\n\n\nval mh = new BucketedRandomProjectionLSH()\n    .setInputCol(\"tfidf\")\n    .setOutputCol(\"brpBuckets\")\n    .setBucketLength(5)\n    .setNumHashTables(3)\n\nval mhModel = mh.fit(trainFeatures)",
+      "dateUpdated": "2020-11-14T08:22:25+0000",
+      "dateFinished": "2020-11-14T07:45:02+0000",
+      "dateStarted": "2020-11-14T07:45:00+0000",
+      "title": "Проделаем все тоже самое, но для расстояния Евклида",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "import org.apache.spark.ml.feature.BucketedRandomProjectionLSH\n\u001b[1m\u001b[34mmh\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.ml.feature.BucketedRandomProjectionLSH\u001b[0m = brp-lsh_51a9e5216359\n\u001b[1m\u001b[34mmhModel\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.ml.feature.BucketedRandomProjectionLSHModel\u001b[0m = brp-lsh_51a9e5216359\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=350",
+              "$$hashKey": "object:11427"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=351",
+              "$$hashKey": "object:11428"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=352",
+              "$$hashKey": "object:11429"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=353",
+              "$$hashKey": "object:11430"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=354",
+              "$$hashKey": "object:11431"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337517289_1897987480",
+      "id": "paragraph_1605337517289_1897987480",
+      "dateCreated": "2020-11-14T07:05:17+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:932",
+      "text": "val euqlidNeigh = mhModel.approxSimilarityJoin(trainFeatures, testFeaturesWithIndex, 10)\n\neuqlidNeigh.show",
+      "dateUpdated": "2020-11-14T07:46:03+0000",
+      "dateFinished": "2020-11-14T07:46:14+0000",
+      "dateStarted": "2020-11-14T07:46:03+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------------------+--------------------+-----------------+\n|            datasetA|            datasetB|          distCol|\n+--------------------+--------------------+-----------------+\n|[basic nice, basi...|[great hotel husb...|8.963997153691341|\n|[great hotel, sta...|[nice place stay ...|9.716457411460704|\n|[great booking di...|[loved hotel hote...|9.378867988464684|\n|[class hotel reas...|[great hotel husb...|9.826140133928995|\n|[excellent hotel ...|[great small bout...| 8.93151117344239|\n|[cool rooms groov...|[great hotel husb...|9.808515844938485|\n|[great beds, best...|[great small bout...|9.285402660368266|\n|[great stayed cha...|[good hotel enjoy...|9.928711158970755|\n|[enjoyed hotel lo...|[loved art, comfo...|9.694004629937949|\n|[lovely comfortab...|[great hotel husb...|9.963559042675723|\n|[best hotels lond...|[small nice, deco...|9.984143514387492|\n|[best hotel room ...|[great small bout...|9.857996847354991|\n|[best hotels lond...|[great hotel husb...| 8.54577846639762|\n|[great hotel grea...|[great small bout...|8.327942311197052|\n|[great hotel, sta...|[not ask excellen...|9.635969890856781|\n|[great service fa...|[great hotel husb...|8.714922298998815|\n|[great beds, best...|[loved hotel hote...|9.514815436994029|\n|[good hotel good,...|[nice place stay ...|9.511848697556397|\n|[excellent hotel ...|[not ask excellen...| 9.70387407002576|\n|[good hotel good,...|[great hotel husb...|8.719884108318313|\n+--------------------+--------------------+-----------------+\nonly showing top 20 rows\n\n\u001b[1m\u001b[34meuqlidNeigh\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.Dataset[_]\u001b[0m = [datasetA: struct<Review: string, Rating: int ... 5 more fields>, datasetB: struct<Review: string, Rating: int ... 6 more fields> ... 1 more field]\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337517803_-1348895563",
+      "id": "paragraph_1605337517803_-1348895563",
+      "dateCreated": "2020-11-14T07:05:17+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1070",
+      "text": "val predictions = euqlidNeigh\n    .withColumn(\"similarity\", (lit(1) / (col(\"distCol\") + lit(0.0000001))))\n    .groupBy(\"datasetB.id\")\n    .agg((sum(col(\"similarity\") * col(\"datasetA.Rating\")) / sum(col(\"similarity\"))).as(\"predict\"))\n\nval forMetric = testFeaturesWithIndex.join(predictions, Seq(\"id\"))\n",
+      "dateUpdated": "2020-11-14T07:47:47+0000",
+      "dateFinished": "2020-11-14T07:47:47+0000",
+      "dateStarted": "2020-11-14T07:47:47+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mpredictions\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m = [id: bigint, predict: double]\n\u001b[1m\u001b[34mforMetric\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m = [id: bigint, Review: string ... 6 more fields]\n"
+          }
+        ]
+      }
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=355",
+              "$$hashKey": "object:11628"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=356",
+              "$$hashKey": "object:11629"
+            },
+            {
+              "jobUrl": "http://de615bd6b1e6:4040/jobs/job?id=357",
+              "$$hashKey": "object:11630"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1605337517633_1361028223",
+      "id": "paragraph_1605337517633_1361028223",
+      "dateCreated": "2020-11-14T07:05:17+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1001",
+      "text": "metrics.evaluate(forMetric)",
+      "dateUpdated": "2020-11-14T07:48:05+0000",
+      "dateFinished": "2020-11-14T07:48:19+0000",
+      "dateStarted": "2020-11-14T07:48:05+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mres40\u001b[0m: \u001b[1m\u001b[32mDouble\u001b[0m = 0.5784296763443763\n"
+          }
+        ]
+      }
+    }
+  ],
+  "name": "made-seminar",
+  "id": "2FRPAZK45",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/made-seminar"
+}
